@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+<div class="container">
+    <!--<form id="publish" class="form-inline">-->
+        <input type="text" id="message"/>
+        <input type="button"  id="send" value="submit"/>
+    <!--</form>-->
+    <ul id="messages">
+
+    </ul>
+    <script>
+        /**
+         * Created by vintizer on 1/17/16.
+         */
+        var publish = document.getElementById('publish');
+        var messages = document.getElementById('messages');
+        document.getElementById('send')
+                .addEventListener('click', function submitForm(){
+            var mes = document.getElementById('message').value;
+            console.log(mes);
+            var xhr=new XMLHttpRequest();
+            xhr.open('POST','/publish', true);
+            xhr.send(JSON.stringify({message: mes}));
+                    document.getElementById('message').value = '';
+//            return false;
+        });
+        subscribe();
+        function subscribe(){
+            var xhr=new XMLHttpRequest();
+            xhr.open('GET', '/subscribe', true);
+            xhr.onload = function(){
+                var li = document.createElement('li');
+                li.textContent = this.responseText;
+                messages.appendChild(li);
+                subscribe();
+            };
+            xhr.onerror=xhr.onabort = function(){
+                setTimeout(subscribe,500);
+            };
+            xhr.send('');
+        }
+
+    </script>
+</div>
+</body>
+</html>
